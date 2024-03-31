@@ -41,8 +41,19 @@
   .wall {
     position: absolute;
     background-color: white;
+    width: 100%;
+    height: 10px;
+  }
+
+  .top-wall {
+    top: 0;
+  }
+
+  .left-wall,
+  .right-wall {
+    top: 0;
+    height: 100%;
     width: 10px;
-    height: 100vh;
   }
 
   .left-wall {
@@ -58,6 +69,7 @@
 <div id="container">
   <div id="bar"></div>
   <div id="ball"></div>
+  <div class="wall top-wall"></div>
   <div class="wall left-wall"></div>
   <div class="wall right-wall"></div>
 </div>
@@ -66,6 +78,7 @@
   const container = document.getElementById('container');
   const bar = document.getElementById('bar');
   const ball = document.getElementById('ball');
+  const topWall = document.querySelector('.top-wall');
   const leftWall = document.querySelector('.left-wall');
   const rightWall = document.querySelector('.right-wall');
 
