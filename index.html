@@ -7,11 +7,8 @@
 <style>
   body {
     background-color: #222; /* Dark grey background color */
-    color: white; /* Text color */
-    font-family: Arial, sans-serif; /* Font family */
-    text-align: center; /* Center-align text */
     margin: 0; /* Remove default margin */
-    padding: 0; /* Remove default padding */
+    overflow: hidden; /* Hide overflow */
   }
 
   #ball {
@@ -20,46 +17,17 @@
     height: 50px; /* Set height of ball */
     background-color: red; /* Red color for the ball */
     border-radius: 50%; /* Make ball circular */
+    animation: bounce 2s infinite alternate; /* Animation properties */
+  }
+
+  @keyframes bounce {
+    to {
+      transform: translateY(calc(100vh - 100px)); /* Move ball to bottom of screen */
+    }
   }
 </style>
 </head>
 <body>
 <div id="ball"></div>
-
-<script>
-  const ball = document.getElementById('ball');
-
-  // Variables for ball properties
-  let ballTop = 0;
-  let ballLeft = 0;
-  let ballSpeedX = 3;
-  let ballSpeedY = 5;
-
-  // Function to update ball position
-  function updateBallPosition() {
-    ballTop += ballSpeedY;
-    ballLeft += ballSpeedX;
-
-    // Check for collision with the top and bottom edges
-    if (ballTop <= 0 || ballTop + ball.offsetHeight >= window.innerHeight) {
-      ballSpeedY *= -1; // Reverse ball direction
-    }
-
-    // Check for collision with the left and right edges
-    if (ballLeft <= 0 || ballLeft + ball.offsetWidth >= window.innerWidth) {
-      ballSpeedX *= -1; // Reverse ball direction
-    }
-
-    // Update ball position
-    ball.style.top = ballTop + 'px';
-    ball.style.left = ballLeft + 'px';
-
-    // Request animation frame
-    requestAnimationFrame(updateBallPosition);
-  }
-
-  // Start the animation
-  updateBallPosition();
-</script>
 </body>
 </html>
