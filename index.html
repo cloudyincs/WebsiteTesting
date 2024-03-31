@@ -3,31 +3,107 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Ball</title>
+<title>Simple Game</title>
 <style>
   body {
     background-color: #222; /* Dark grey background color */
     margin: 0; /* Remove default margin */
     overflow: hidden; /* Hide overflow */
+    font-family: Arial, sans-serif; /* Font family */
+    color: white; /* Text color */
   }
 
-  #ball {
-    position: absolute; /* Position ball absolute to body */
-    width: 50px; /* Set width of ball */
-    height: 50px; /* Set height of ball */
-    background-color: red; /* Red color for the ball */
-    border-radius: 50%; /* Make ball circular */
-    animation: bounce 2s infinite alternate; /* Animation properties */
+  #game-container {
+    position: relative; /* Position game container relative */
+    width: 100vw; /* Set width of game container to viewport width */
+    height: 100vh; /* Set height of game container to viewport height */
   }
 
-  @keyframes bounce {
-    to {
-      transform: translateY(calc(100vh - 100px)); /* Move ball to bottom of screen */
-    }
+  #character {
+    position: absolute; /* Position character absolute to game container */
+    width: 50px; /* Set width of character */
+    height: 50px; /* Set height of character */
+    background-color: blue; /* Blue color for character */
+    bottom: 0; /* Align character to bottom of game container */
+    left: 50%; /* Center character horizontally */
+    transform: translateX(-50%); /* Center character horizontally */
+  }
+
+  .obstacle {
+    position: absolute; /* Position obstacle absolute to game container */
+    width: 50px; /* Set width of obstacle */
+    height: 50px; /* Set height of obstacle */
+    background-color: red; /* Red color for obstacle */
   }
 </style>
 </head>
 <body>
-<div id="ball"></div>
+<div id="game-container">
+  <div id="character"></div>
+</div>
+
+<script>
+  const character = document.getElementById('character');
+  const gameContainer = document.getElementById('game-container');
+
+  // Initialize character position
+  let characterPosition = 50;
+
+  // Event listener for arrow key press
+  document.addEventListener('keydown', function(event) {
+    if (event.key === 'ArrowLeft') {
+      // Move character left
+      characterPosition -= 10;
+      character.style.left = characterPosition + 'px';
+    } else if (event.key === 'ArrowRight') {
+      // Move character right
+      characterPosition += 10;
+      character.style.left = characterPosition + 'px';
+    }
+  });
+
+  // Function to create obstacles
+  function createObstacle() {
+    const obstacle = document.createElement('div');
+    obstacle.classList.add('obstacle');
+    obstacle.style.left = Math.random() * (gameContainer.clientWidth - 50) + 'px'; // Random horizontal position
+    obstacle.style.top = '0'; // Start from top of game container
+    gameContainer.appendChild(obstacle);
+
+    // Move obstacle downwards
+    let obstacleInterval = setInterval(function() {
+      obstacle.style.top = obstacle.offsetTop + 10 + 'px'; // Move 10 pixels downwards
+      // Check collision with character
+      if (collision(character, obstacle)) {
+        clearInterval(obstacleInterval); // Stop obstacle movement
+        gameOver(); // End game
+      }
+      // Check if obstacle reached bottom of game container
+      if (obstacle.offsetTop >= gameContainer.clientHeight) {
+        clearInterval(obstacleInterval); // Stop obstacle movement
+        obstacle.remove(); // Remove obstacle from DOM
+      }
+    }, 50); // Move obstacle every 50 milliseconds
+  }
+
+  // Function to check collision between two elements
+  function collision(character, obstacle) {
+    const characterRect = character.getBoundingClientRect();
+    const obstacleRect = obstacle.getBoundingClientRect();
+    return !(characterRect.right < obstacleRect.left ||
+             characterRect.left > obstacleRect.right ||
+             characterRect.bottom < obstacleRect.top ||
+             characterRect.top > obstacleRect.bottom);
+  }
+
+  // Function to end the game
+  function gameOver() {
+    alert('Game Over!');
+    location.reload(); // Reload the page to restart the game
+  }
+
+  // Create obstacles at regular intervals
+  setInterval(createObstacle, 2000); // Create obstacle every 2 seconds
+</script>
 </body>
 </html>
