@@ -1,77 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mouse Tracker</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #222;
-            cursor: none; /* Hide default cursor */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bouncing Ball Game</title>
+<style>
+  body {
+    background-color: #222; /* Dark grey background color */
+    color: white; /* Text color */
+    font-family: Arial, sans-serif; /* Font family */
+    text-align: center; /* Center-align text */
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-        .container {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
+  #bar {
+    width: 100px;
+    height: 20px;
+    background-color: #007bff; /* Blue color */
+    position: absolute;
+    bottom: 20px; /* Position the bar slightly below the middle of the screen */
+  }
 
-        #follower {
-            width: 100px;
-            height: 20px;
-            background-color: #555;
-            position: absolute;
-            bottom: calc(50vh - 10px); /* Positioned slightly below the middle */
-            left: 50%;
-            transform: translateX(-50%);
-        }
-
-        #ball {
-            width: 30px;
-            height: 30px;
-            background-color: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: -30px; /* Initially positioned above the screen */
-            left: calc(50% - 15px); /* Centered horizontally */
-            animation: bounce 2s linear forwards; /* Animation to make it bounce */
-        }
-
-        @keyframes bounce {
-            0% {
-                top: -30px; /* Start position */
-            }
-            50% {
-                top: calc(50vh - 15px); /* Midway position */
-            }
-            100% {
-                top: -30px; /* Return to start position */
-            }
-        }
-    </style>
+  #ball {
+    width: 20px;
+    height: 20px;
+    background-color: #ff0000; /* Red color */
+    position: absolute;
+    top: 0;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <div id="follower"></div>
-        <div id="ball"></div>
-    </div>
+<div id="bar"></div>
+<div id="ball"></div>
 
-    <script>
-        const follower = document.getElementById('follower');
-        const ball = document.getElementById('ball');
+<script>
+  const bar = document.getElementById("bar");
+  const ball = document.getElementById("ball");
+  let ballSpeedY = 0; // Vertical speed of the ball
+  const gravity = 0.5; // Gravity value
 
-        document.addEventListener('mousemove', (e) => {
-            const xPos = e.clientX;
-            follower.style.left = xPos + 'px';
-        });
+  // Function to update the ball's position
+  function updateBallPosition() {
+    let ballTop = parseInt(ball.style.top) || 0;
+    ball.style.top = ballTop + ballSpeedY + "px";
+    ballSpeedY += gravity; // Apply gravity to the vertical speed
 
-        // Drop ball after 2 seconds
-        setTimeout(() => {
-            ball.style.animation = 'bounce 2s linear forwards'; // Start the bouncing animation
-        }, 2000);
-    </script>
+    // Check collision with the bar
+    if (ballTop + ball.offsetHeight >= bar.offsetTop && ballTop <= bar.offsetTop + bar.offsetHeight && ballSpeedY > 0) {
+      ballSpeedY *= -0.8; // Reverse the vertical speed and reduce it (simulate bounce)
+    }
+
+    // Check collision with the bottom of the screen
+    if (ballTop + ball.offsetHeight >= window.innerHeight) {
+      ballSpeedY *= -0.8; // Reverse the vertical speed and reduce it (simulate bounce)
+      ball.style.top = window.innerHeight - ball.offsetHeight + "px";
+    }
+
+    // Request animation frame to update the position recursively
+    requestAnimationFrame(updateBallPosition);
+  }
+
+  // Function to handle mouse movement and move the bar accordingly
+  function moveBar(event) {
+    const mouseX = event.clientX;
+    const windowWidth = window.innerWidth;
+    const barWidth = bar.offsetWidth;
+    const maxX = windowWidth - barWidth;
+    const newX = Math.min(maxX, Math.max(0, mouseX - (barWidth / 2))); // Ensure bar stays within window bounds
+    bar.style.left = newX + "px";
+  }
+
+  // Add event listener to track mouse movement and move the bar
+  document.addEventListener("mousemove", moveBar);
+
+  // Start the game after 2 seconds
+  setTimeout(() => {
+    updateBallPosition();
+  }, 2000);
+</script>
 </body>
 </html>
