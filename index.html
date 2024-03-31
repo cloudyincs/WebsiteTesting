@@ -3,83 +3,112 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bouncing Ball Game</title>
+<title>Bouncing Ball</title>
 <style>
   body {
     background-color: #222; /* Dark grey background color */
     color: white; /* Text color */
     font-family: Arial, sans-serif; /* Font family */
     text-align: center; /* Center-align text */
-    margin: 0;
-    padding: 0;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+  }
+
+  #container {
+    position: relative; /* Position container relative to body */
+    width: 100%;
     height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 
   #bar {
-    width: 100px;
-    height: 20px;
-    background-color: #007bff; /* Blue color */
-    position: absolute;
-    bottom: 20px; /* Position the bar slightly below the middle of the screen */
+    position: absolute; /* Position bar absolute to container */
+    bottom: 20px; /* Place bar 20px above bottom of container */
+    left: 50%; /* Center the bar horizontally */
+    width: 100px; /* Set width of bar */
+    height: 10px; /* Set height of bar */
+    background-color: white; /* White color for the bar */
+    transform: translateX(-50%); /* Adjust horizontal position */
   }
 
   #ball {
-    width: 20px;
-    height: 20px;
-    background-color: #ff0000; /* Red color */
+    position: absolute; /* Position ball absolute to container */
+    width: 50px; /* Set width of ball */
+    height: 50px; /* Set height of ball */
+    background-color: red; /* Red color for the ball */
+    border-radius: 50%; /* Make ball circular */
+  }
+
+  .wall {
     position: absolute;
-    top: 0;
+    background-color: white;
+    width: 10px;
+    height: 100vh;
+  }
+
+  .left-wall {
+    left: 0;
+  }
+
+  .right-wall {
+    right: 0;
   }
 </style>
 </head>
 <body>
-<div id="bar"></div>
-<div id="ball"></div>
+<div id="container">
+  <div id="bar"></div>
+  <div id="ball"></div>
+  <div class="wall left-wall"></div>
+  <div class="wall right-wall"></div>
+</div>
 
 <script>
-  const bar = document.getElementById("bar");
-  const ball = document.getElementById("ball");
-  let ballSpeedY = 0; // Vertical speed of the ball
-  const gravity = 0.5; // Gravity value
+  const container = document.getElementById('container');
+  const bar = document.getElementById('bar');
+  const ball = document.getElementById('ball');
+  const leftWall = document.querySelector('.left-wall');
+  const rightWall = document.querySelector('.right-wall');
 
-  // Function to update the ball's position
+  // Variables for ball properties
+  let ballTop = 0;
+  let ballLeft = 0;
+  let ballSpeedX = 3;
+  let ballSpeedY = 0;
+
+  // Function to update ball position
   function updateBallPosition() {
-    let ballTop = parseInt(ball.style.top) || 0;
-    ball.style.top = ballTop + ballSpeedY + "px";
-    ballSpeedY += gravity; // Apply gravity to the vertical speed
+    ballTop += ballSpeedY;
+    ballLeft += ballSpeedX;
 
-    // Check collision with the bar
-    if (ballTop + ball.offsetHeight >= bar.offsetTop && ballTop <= bar.offsetTop + bar.offsetHeight && ballSpeedY > 0) {
-      ballSpeedY *= -0.8; // Reverse the vertical speed and reduce it (simulate bounce)
+    // Check for collision with the top and bottom edges
+    if (ballTop <= 0 || ballTop + ball.offsetHeight >= container.offsetHeight) {
+      ballSpeedY *= -1; // Reverse ball direction
     }
 
-    // Check collision with the bottom of the screen
-    if (ballTop + ball.offsetHeight >= window.innerHeight) {
-      ballSpeedY *= -0.8; // Reverse the vertical speed and reduce it (simulate bounce)
-      ball.style.top = window.innerHeight - ball.offsetHeight + "px";
+    // Check for collision with the left and right walls
+    if (ballLeft <= 0 || ballLeft + ball.offsetWidth >= container.offsetWidth) {
+      ballSpeedX *= -1; // Reverse ball direction
     }
 
-    // Request animation frame to update the position recursively
+    // Check for collision with the bar
+    const barRect = bar.getBoundingClientRect();
+    const ballRect = ball.getBoundingClientRect();
+    if (ballRect.bottom >= barRect.top && ballRect.left >= barRect.left && ballRect.right <= barRect.right) {
+      ballSpeedY *= -1; // Reverse ball direction
+    }
+
+    // Apply gravity
+    ballSpeedY += 0.5;
+
+    // Update ball position
+    ball.style.top = ballTop + 'px';
+    ball.style.left = ballLeft + 'px';
+
+    // Request animation frame
     requestAnimationFrame(updateBallPosition);
   }
 
-  // Function to handle mouse movement and move the bar accordingly
-  function moveBar(event) {
-    const mouseX = event.clientX;
-    const windowWidth = window.innerWidth;
-    const barWidth = bar.offsetWidth;
-    const maxX = windowWidth - barWidth;
-    const newX = Math.min(maxX, Math.max(0, mouseX - (barWidth / 2))); // Ensure bar stays within window bounds
-    bar.style.left = newX + "px";
-  }
-
-  // Add event listener to track mouse movement and move the bar
-  document.addEventListener("mousemove", moveBar);
-
-  // Start the game after 2 seconds
+  // Start the animation
   setTimeout(() => {
     updateBallPosition();
   }, 2000);
