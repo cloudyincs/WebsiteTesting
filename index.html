@@ -24,23 +24,54 @@
             height: 20px;
             background-color: #555;
             position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
+            bottom: calc(50vh - 10px); /* Positioned slightly below the middle */
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        #ball {
+            width: 30px;
+            height: 30px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: -30px; /* Initially positioned above the screen */
+            left: calc(50% - 15px); /* Centered horizontally */
+            animation: bounce 2s linear forwards; /* Animation to make it bounce */
+        }
+
+        @keyframes bounce {
+            0% {
+                top: -30px; /* Start position */
+            }
+            50% {
+                top: calc(50vh - 15px); /* Midway position */
+            }
+            100% {
+                top: -30px; /* Return to start position */
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="follower"></div>
+        <div id="ball"></div>
     </div>
 
     <script>
         const follower = document.getElementById('follower');
+        const ball = document.getElementById('ball');
 
         document.addEventListener('mousemove', (e) => {
             const xPos = e.clientX;
             follower.style.left = xPos + 'px';
         });
+
+        // Drop ball after 2 seconds
+        setTimeout(() => {
+            ball.style.animation = 'bounce 2s linear forwards'; // Start the bouncing animation
+        }, 2000);
     </script>
 </body>
 </html>
