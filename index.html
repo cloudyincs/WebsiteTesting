@@ -14,79 +14,26 @@
     padding: 0; /* Remove default padding */
   }
 
-  #container {
-    position: relative; /* Position container relative to body */
-    width: 100%;
-    height: 100vh;
-  }
-
-  #bar {
-    position: absolute; /* Position bar absolute to container */
-    bottom: 20px; /* Place bar 20px above bottom of container */
-    left: 50%; /* Center the bar horizontally */
-    width: 100px; /* Set width of bar */
-    height: 10px; /* Set height of bar */
-    background-color: white; /* White color for the bar */
-    transform: translateX(-50%); /* Adjust horizontal position */
-  }
-
   #ball {
-    position: absolute; /* Position ball absolute to container */
+    position: absolute; /* Position ball absolute to body */
     width: 50px; /* Set width of ball */
     height: 50px; /* Set height of ball */
     background-color: red; /* Red color for the ball */
     border-radius: 50%; /* Make ball circular */
   }
-
-  .wall {
-    position: absolute;
-    background-color: white;
-    width: 100%;
-    height: 10px;
-  }
-
-  .top-wall {
-    top: 0;
-  }
-
-  .left-wall,
-  .right-wall {
-    top: 0;
-    height: 100%;
-    width: 10px;
-  }
-
-  .left-wall {
-    left: 0;
-  }
-
-  .right-wall {
-    right: 0;
-  }
 </style>
 </head>
 <body>
-<div id="container">
-  <div id="bar"></div>
-  <div id="ball"></div>
-  <div class="wall top-wall"></div>
-  <div class="wall left-wall"></div>
-  <div class="wall right-wall"></div>
-</div>
+<div id="ball"></div>
 
 <script>
-  const container = document.getElementById('container');
-  const bar = document.getElementById('bar');
   const ball = document.getElementById('ball');
-  const topWall = document.querySelector('.top-wall');
-  const leftWall = document.querySelector('.left-wall');
-  const rightWall = document.querySelector('.right-wall');
 
   // Variables for ball properties
   let ballTop = 0;
   let ballLeft = 0;
   let ballSpeedX = 3;
-  let ballSpeedY = 0;
+  let ballSpeedY = 5;
 
   // Function to update ball position
   function updateBallPosition() {
@@ -94,24 +41,14 @@
     ballLeft += ballSpeedX;
 
     // Check for collision with the top and bottom edges
-    if (ballTop <= 0 || ballTop + ball.offsetHeight >= container.offsetHeight) {
+    if (ballTop <= 0 || ballTop + ball.offsetHeight >= window.innerHeight) {
       ballSpeedY *= -1; // Reverse ball direction
     }
 
-    // Check for collision with the left and right walls
-    if (ballLeft <= 0 || ballLeft + ball.offsetWidth >= container.offsetWidth) {
+    // Check for collision with the left and right edges
+    if (ballLeft <= 0 || ballLeft + ball.offsetWidth >= window.innerWidth) {
       ballSpeedX *= -1; // Reverse ball direction
     }
-
-    // Check for collision with the bar
-    const barRect = bar.getBoundingClientRect();
-    const ballRect = ball.getBoundingClientRect();
-    if (ballRect.bottom >= barRect.top && ballRect.left >= barRect.left && ballRect.right <= barRect.right) {
-      ballSpeedY *= -1; // Reverse ball direction
-    }
-
-    // Apply gravity
-    ballSpeedY += 0.5;
 
     // Update ball position
     ball.style.top = ballTop + 'px';
@@ -122,9 +59,7 @@
   }
 
   // Start the animation
-  setTimeout(() => {
-    updateBallPosition();
-  }, 2000);
+  updateBallPosition();
 </script>
 </body>
 </html>
